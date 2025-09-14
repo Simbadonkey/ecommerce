@@ -3,14 +3,14 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { HttpClient} from '@angular/common/http';
 import { ProductService } from './service/product.service';
 import { ProductCategoryMenu } from './components/product-category-menu/product-category-menu';
-
-
+import { Search } from './components/search/search';
 
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, 
-            ProductCategoryMenu],
+            ProductCategoryMenu,
+            Search],
   providers: [ProductService,
               HttpClient,
   ],

@@ -3,7 +3,7 @@
         <div class="row">
 
             <!-- loop over the collection of product -->
-             <div *ngFor="let tempProduct of products" class="col-md-3">
+            <div *ngFor="let tempProduct of products" class="col-md-3">
 
                 <div class="product-box">
                     <img src="{{ tempProduct.imageUrl }}" class="img-responsive">
@@ -12,7 +12,18 @@
                     <a href="#" class="primary-btn">Add to cart</a>
                 </div>
 
-             </div>
+            </div>
+
+            <!-- if products empty, display a messger -->
+            <!--question mark: safe navigation operator: if(products is null) or (products.length == 0)-->
+            <div *ngIf="products?.length == 0" class="alert alert-warning col-md-12" role="alert">
+                No products found.
+            </div>
+
+
+
+
+
         </div>
     </div>
 </div>
