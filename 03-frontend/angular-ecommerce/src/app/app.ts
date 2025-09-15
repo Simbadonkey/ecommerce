@@ -6,11 +6,14 @@ import { ProductCategoryMenu } from './components/product-category-menu/product-
 import { Search } from './components/search/search';
 
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, 
             ProductCategoryMenu,
-            Search],
+            Search,
+            NgbModule],
   providers: [ProductService,
               HttpClient,
   ],
