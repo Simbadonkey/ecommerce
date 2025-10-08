@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../../common/product';
-import { ProductService } from '../../service/product.service';
+import { ProductService } from '../../services/product.service';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CartItem } from '../../common/cart-item';
+import { Cart } from '../../services/cart.service';
 
 @Component({
   selector: 'app-product-list',
@@ -31,6 +33,7 @@ export class ProductList implements OnInit{
   
 
   constructor(private productService: ProductService,
+              private cartService: Cart,
               private route: ActivatedRoute){
 
   }
@@ -130,5 +133,15 @@ export class ProductList implements OnInit{
       this.thePageSize = data.page.size;
       this.theTotalElements = data.page.totalElements;
     };
+  }
+
+
+  addToCart(theProduct: Product){
+
+    console.log(`Adding to cart: ${theProduct.name}, ${theProduct.unitPrice}`);
+
+    const theCartItem = new CartItem(theProduct);
+
+    this.cartService.addToCart(theCartItem);
   }
 }

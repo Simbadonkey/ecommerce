@@ -1,10 +1,10 @@
 package com.betterLift.ecommerce.config;
 
-import com.betterLift.ecommerce.entity.Product;
-import com.betterLift.ecommerce.entity.ProductCategory;
+import com.betterLift.ecommerce.entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
@@ -19,6 +19,9 @@ import java.util.Set;
 @Configuration
 public class MyDataRestConfig implements RepositoryRestConfigurer {
 
+    @Value("${allowed.origins}")
+    private String[] theAllowedOrigins;
+
     private EntityManager entityManager;
 
     @Autowired
@@ -29,25 +32,32 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
 
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors){
-        HttpMethod[] theUnsupportedAActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
+        HttpMethod[] theUnsupportedAActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH};
 
         //disable HTTP methods for Product: PUT, POST, and DELETE
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAActions))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAActions));
+        disableHttpMethods(Product.class, config, theUnsupportedAActions);
 
 
         //disable HTTP methods for ProductCategory: PUT, POST, and DELETE
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAActions))
-                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAActions));
+        disableHttpMethods(ProductCategory.class, config, theUnsupportedAActions);
+        disableHttpMethods(Country.class, config, theUnsupportedAActions);
+        disableHttpMethods(State.class, config, theUnsupportedAActions);
+        disableHttpMethods(Order.class, config, theUnsupportedAActions);
 
 
         //call an internal helper method
         exposeIds(config);
 
+        // configure cors mapping
+        cors.addMapping(config.getBasePath() + "/**").allowedOrigins(theAllowedOrigins);
+
+    }
+
+    private static void disableHttpMethods(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedAActions) {
+        config.getExposureConfiguration()
+                .forDomainType(theClass)
+                .withItemExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAActions))
+                .withCollectionExposure((metdata, httpMethods) -> httpMethods.disable(theUnsupportedAActions));
     }
 
     private void exposeIds(RepositoryRestConfiguration config){
